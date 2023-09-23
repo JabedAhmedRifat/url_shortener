@@ -222,7 +222,7 @@ def urlMappingLoginCreate(request):
             short_link_length = 8
             try:
                 short_link = ''.join(random.choice(string.ascii_uppercase+string.ascii_lowercase+string.digits) for _ in range(short_link_length))
-                serializer =  UrlMappingLoginSerializer(data={'main_link':main_link,'short_link':short_link, 'user': user_pk, 'info':info_id}, partial=True)
+                serializer =  UrlMappingLoginSerializer(data={'main_link':main_link,'short_link':short_link, 'user': user_pk, 'info':info_id, 'count' : 0}, partial=True)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data)
@@ -231,7 +231,7 @@ def urlMappingLoginCreate(request):
 
             except IntegrityError:
                 short_link = ''.join(random.choice(string.ascii_uppercase+string.ascii_lowercase+string.digits) for _ in range(short_link_length))
-                serializer = UrlMappingLoginSerializer(data={'main_link': main_link, 'short_link':short_link, 'user':user_pk, 'info': info_id}, partial=True)
+                serializer = UrlMappingLoginSerializer(data={'main_link': main_link, 'short_link':short_link, 'user':user_pk, 'info': info_id, 'count' : 0}, partial=True)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data)
@@ -248,6 +248,10 @@ def get_main_link_auth(request, short_link):
     try:
         url_mapping = UrlMappingLogin.objects.get(short_link=short_link)
         main_link = ({'main_link':url_mapping.main_link})
+        
+        url_mapping.count += 1
+        url_mapping.save()
+        
         return Response({'main_link':main_link})
     except UrlMappingLogin.DoesNotExist:
         return Response({'message':'short link doesnot Exist'})
