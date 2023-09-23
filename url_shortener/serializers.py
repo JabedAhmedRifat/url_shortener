@@ -3,7 +3,7 @@ from .models import *
 
 class DevicesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Devices
+        model = Device
         fields = '__all__'
         
 
@@ -14,8 +14,10 @@ class UrlInfoSerializer(serializers.ModelSerializer):
         
         
 class UrlMappingLoginSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    
     class Meta:
-        models = UrlMappingLogin
+        model = UrlMappingLogin
         fields = '__all__'
         
 

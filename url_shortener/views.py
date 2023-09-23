@@ -58,7 +58,7 @@ def upload_csv_and_generate_short_links(request):
 @api_view(['GET'])
 def allDevicesView(request):
     if request.method=='GET':
-        data = Devices.objects.all().order_by('-id')
+        data = Device.objects.all().order_by('-id')
         serializer = DevicesSerializer(data, many=True)
         return Response(serializer.data)
     
@@ -69,7 +69,7 @@ def allDevicesView(request):
     
 @api_view(['GET'])
 def devicesDetail(request, pk ):
-    data = Devices.objects.get(id=pk)
+    data = Device.objects.get(id=pk)
     serializer = DevicesSerializer(data)
     return Response(serializer.data)
 
@@ -94,7 +94,7 @@ def devicesCreate(request):
 
 @api_view(['POST'])
 def devicesUpdate(request, pk):
-    data = Devices.objects.get(id = pk)
+    data = Device.objects.get(id = pk)
     serializer = DevicesSerializer(instance=data, data=request.data,partial=True)
 
     if serializer.is_valid():
@@ -109,7 +109,7 @@ def devicesUpdate(request, pk):
 
 @api_view(['DELETE'])
 def devicesDelete(request, pk):
-    data = Devices.objects.get(id=pk)
+    data = Device.objects.get(id=pk)
     data.delete()
     return Response({
         "message":"Devices deleted successfully"
@@ -143,9 +143,9 @@ def urlInfoDetail(request, pk):
 
 
 @api_view(['POST'])
-def urlInfoDetail(request):
+def urlInfoCreate(request):
     data = request.data
-    serializer = UrlInfoSerializer(data)
+    serializer = UrlInfoSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -181,6 +181,9 @@ def urlInfoDelete(request,pk):
 
 
 # Url UrlMappingLogin
+
+
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 def allUrlMappingLogin(request):
@@ -212,11 +215,14 @@ def urlMappingLoginDetail(reqeust,pk):
 def urlMappingLoginCreate(request):
     if request.method == 'POST':
         main_link= request.data.get('main_link')
+        info_id = request.data.get('info')
         if main_link:
+            user = request.user
+            user_pk = user.pk
             short_link_length = 8
             try:
                 short_link = ''.join(random.choice(string.ascii_uppercase+string.ascii_lowercase+string.digits) for _ in range(short_link_length))
-                serializer =  UrlMappingLoginSerializer(data={'main_link':main_link,'short_link':short_link}, partial=True)
+                serializer =  UrlMappingLoginSerializer(data={'main_link':main_link,'short_link':short_link, 'user': user_pk, 'info':info_id}, partial=True)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data)
@@ -225,16 +231,13 @@ def urlMappingLoginCreate(request):
 
             except IntegrityError:
                 short_link = ''.join(random.choice(string.ascii_uppercase+string.ascii_lowercase+string.digits) for _ in range(short_link_length))
-                serializer = UrlMappingLoginSerializer(data={'main_link': main_link, 'short_link':short_link}, partial=True)
+                serializer = UrlMappingLoginSerializer(data={'main_link': main_link, 'short_link':short_link, 'user':user_pk, 'info': info_id}, partial=True)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data)
                 return Response(serializer.errors)
                 
                 
-        
-    
-    
     
     
     

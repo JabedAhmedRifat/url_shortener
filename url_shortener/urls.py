@@ -13,7 +13,7 @@ urlpatterns = [
     
     path('urlinfo-list/', allUrlInfoView),
     path('urlinfo-detail/<int:pk>/', urlInfoDetail),
-    path('urlinfo-create/', urlInfoUpdate),
+    path('urlinfo-create/', urlInfoCreate),
     path('urlinfo-update/<int:pk>/', urlInfoUpdate),
     path('urlinfo-delete/<int:pk>/', urlInfoDelete),
     
@@ -30,7 +30,7 @@ urlpatterns = [
     
     path('urlmapping-unauth-list/', allUrlMappingAnno),
     path('urlmapping-unauth-detail/<int:pk>/', UrlMappingAnnoDetail),
-    path('urlmapping-unaut-create/', UrlMappingAnnoCreate),
+    path('urlmapping-unauth-create/', UrlMappingAnnoCreate),
     path('u/<str:short_link>/', get_main_link_unauth),
     path('urlmapping-unauth-update/<int:pk>/', UrlMappingAnnoUpdate),
     path('urlmapping-unauth-delete/<int:pk>/', UrlMappingAnnoUpdate),
