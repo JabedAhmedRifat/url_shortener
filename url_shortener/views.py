@@ -16,7 +16,7 @@ import pandas as pd
 
 
 
-
+# Upload csv full of url and it become shorten
 
 @api_view(['POST'])
 def upload_csv_and_generate_short_links(request):
