@@ -16,10 +16,10 @@ import pandas as pd
 
 
 
-# Upload csv full of url and it become shorten
+# for unauth Upload csv full of url and it become shorten
 
 @api_view(['POST'])
-def upload_csv_and_generate_short_links(request):
+def unauth_upload_csv_and_generate_short_links(request):
     if request.method == 'POST':
         excel_file = request.FILES.get('files')
         if excel_file:
@@ -34,14 +34,17 @@ def upload_csv_and_generate_short_links(request):
                 short_link_length = 8
                 short_link = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(short_link_length))
 
-                url_mapping = UrlMappingAnno(main_link=main_link, short_link=short_link)
-                print(main_link, short_link)
-                url_mappings.append(url_mapping)
+                data = {'main_link': main_link, 'short_link':short_link}
+                url_mappings.append(data)
                 
-
-            UrlMappingAnno.objects.bulk_create(url_mappings)
-
-            return Response({'message': 'Data has been processed successfully'})
+            serializer = UrlMappingAnnoSerializer(data=url_mappings, many= True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message':'Data Process successfully', 'url_mappings':serializer.data})
+            
+            else:
+                return Response({'message':'invalid'})
+            
             
         else:
             return Response({'message': 'No file uploaded'})
@@ -49,7 +52,7 @@ def upload_csv_and_generate_short_links(request):
         return Response({'message': 'Invalid'})
 
 
-
+# for Auth Upload Csv and got data 
 
 
 

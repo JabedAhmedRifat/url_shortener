@@ -36,5 +36,5 @@ urlpatterns = [
     path('urlmapping-unauth-delete/<int:pk>/', UrlMappingAnnoUpdate),
     
     
-    path('', upload_csv_and_generate_short_links),
+    path('unauth-file-upload/', unauth_upload_csv_and_generate_short_links),
 ]    
