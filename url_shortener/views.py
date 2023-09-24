@@ -53,6 +53,42 @@ def unauth_upload_csv_and_generate_short_links(request):
 
 
 # for Auth Upload Csv and got data 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+def auth_upload_csv_and_generate_short_link(request):
+    if request.method == "POST":
+        excel_file = request.FILES.get('files')
+        if excel_file:
+            df = pd.read_csv(excel_file)
+            
+            
+            url_mappings = []
+            for index, row in df.iterrows():
+                main_link = row['main_link']
+                # info_id = request.data.get('info')
+                user = request.user
+                user_pk = user.pk
+                short_link_length = 8
+                short_link = ''.join(random.choice(string.ascii_uppercase+string.ascii_lowercase+string.digits) for _ in range(short_link_length))
+
+                data = {'main_link': main_link, 'short_link':short_link, 'user': user_pk}
+                url_mappings.append(data)
+            
+            serializer = UrlMappingLoginSerializer(data= url_mappings, many=True)
+            if serializer.is_valid():
+                serializer.save()
+                
+                serialized_data = [item for item in serializer.data]
+                return Response({'messsage':'data Processing successfully', 'url_mappings': serialized_data})
+            
+            else:
+                return Response({'message':'invalid'})
+            
+            
+        else:
+            return Response({'message':'no file'})
+    else:
+        return Response({'message':'invalid'})
 
 
 

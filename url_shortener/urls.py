@@ -37,4 +37,5 @@ urlpatterns = [
     
     
     path('unauth-file-upload/', unauth_upload_csv_and_generate_short_links),
-]    
+   path('auth-file-upload/', auth_upload_csv_and_generate_short_link), 
+]
